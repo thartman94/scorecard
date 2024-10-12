@@ -1,9 +1,36 @@
 #!/bin/bash
 
 function up() {
-  docker-compose up "$@"
+  docker-compose up -d "$@"
 }
 
 function down() {
-  docker-compose down "$@"
+  docker-compose down -v "$@"
 }
+
+function exec() {
+  docker-compose exec "$@"
+}
+
+function pnpm() {
+  exec client pnpm "$@"
+}
+
+function install-web-deps() {
+  pnpm i
+}
+
+function remove-web-deps() {
+  exec client rm -rf node_modules
+}
+
+###################################################
+# Check if a function name is provided and run it #
+###################################################
+
+if [ -z "$1" ]; then
+  echo "Usage: $0 <function_name> [args]"
+  exit 1
+fi
+
+"$@"

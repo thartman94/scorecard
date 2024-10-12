@@ -1,28 +1,43 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import tseslint from 'typescript-eslint'
+import tseslint from "typescript-eslint";
+import pluginReact from "eslint-plugin-react";
+import importPlugin from "eslint-plugin-import";
 
-export default tseslint.config(
-  { ignores: ['dist'] },
-  {
-    extends: [js.configs.recommended, ...tseslint.configs.recommended],
-    files: ['**/*.{ts,tsx}'],
-    languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
+export default [
+    { files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"] },
+    ...tseslint.configs.recommended,
+    pluginReact.configs.flat.recommended,
+    importPlugin.flatConfigs.recommended,
+    importPlugin.flatConfigs.typescript,
+    {
+        ignores: ["**/node_modules", "eslint.config.js"],
     },
-    plugins: {
-      'react-hooks': reactHooks,
-      'react-refresh': reactRefresh,
+    {
+        rules: {
+            // React > 17 does not require react to be in scope for JSX
+            "react/react-in-jsx-scope": "off",
+
+            // no console.logs or warnings
+            "no-console": ["warn", { allow: ["error"] }],
+
+            // Sort imports using import plugin
+            "sort-imports": "off", // disable default eslint sorting
+            "import/first": "error",
+            "import/newline-after-import": "error",
+            "import/no-duplicates": "error",
+            "import/order": [
+                "error",
+                {
+                    alphabetize: { order: "asc" },
+                    "newlines-between": "always",
+                },
+            ],
+        },
     },
-    rules: {
-      ...reactHooks.configs.recommended.rules,
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
+    {
+        settings: {
+            react: {
+                version: "detect",
+            },
+        },
     },
-  },
-)
+];
