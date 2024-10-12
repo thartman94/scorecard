@@ -1,0 +1,9 @@
+#!/bin/bash
+
+function up() {
+  docker-compose up "$@"
+}
+
+function down() {
+  docker-compose down "$@"
+}
