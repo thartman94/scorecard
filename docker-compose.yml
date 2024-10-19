@@ -1,0 +1,47 @@
+services:
+    client:
+        build:
+            context: ./client
+            dockerfile: Dockerfile
+        ports:
+            - "5173:5173"
+        volumes:
+            - ./client:/app
+            - /app/node_modules
+        environment:
+            - NODE_ENV=development
+        command: ["pnpm", "dev"]
+
+    database:
+        image: "postgres"
+        restart: "always"
+        ports:
+            - 5432:5432
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+            - POSTGRES=postgres
+
+    pgadmin:
+        image: dpage/pgadmin4
+        restart: always
+        ports:
+            - "8888:80"
+        environment:
+            - PGADMIN_DEFAULT_EMAIL="94thartman@gmail.com"
+            - PGADMIN_DEFAULT_PASSWORD="strong-password"
+        volumes:
+            - pgadmin:/var/lib/pgadmin
+
+    server:
+        build:
+            context: ./server
+            dockerfile: Dockerfile
+        ports:
+            - 8080:8080
+
+volumes:
+    pgdata:
+    pgadmin:
